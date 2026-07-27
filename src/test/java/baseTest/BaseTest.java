@@ -14,7 +14,7 @@ public class BaseTest {
     public void setup() {
         System.out.println("Setup running...");
         driver = new ChromeDriver();
-        driver.manage().window().maximize();
+        //driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get("https://demoqa.com/");
     }
