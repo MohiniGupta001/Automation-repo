@@ -1,70 +1,63 @@
 package testCases;
 
-import org.testng.annotations.Test;
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyEvent;
-import java.time.Duration;
 import baseTest.BaseTest;
 
 public class UploadPicture_Test extends BaseTest {
 
     @Test
-    public void uploadPicture() throws InterruptedException, AWTException {
-    	
+    public void uploadPicture() {
 
-        System.out.println("Driver value: " + driver); // 🔥 debug
+        System.out.println("Driver value: " + driver);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        Thread.sleep(4000);
-        WebElement element = driver.findElement(By.xpath("//div//h5[ contains(text() ,'Alerts, Frame')]"));
-        
-        JavascriptExecutor js = (JavascriptExecutor)driver;
+
+        WebElement element = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div//h5[contains(text(),'Alerts, Frame')]")
+                )
+        );
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
         js.executeScript("arguments[0].scrollIntoView(true);", element);
-      
-        element.click();       
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[ contains(text() ,\"Forms\")]"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text() , 'Practice Form')]"))).click();
 
-        // wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uploadPicture"))).sendKeys("C:\\Users\\mohin\\Downloads\\Rishabh Soni CV.pdf");
-      
-        WebElement upload = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uploadPicture")));
+        element.click();
 
-        Thread.sleep(2000);
-        // Click to open file dialog
-        js.executeScript("arguments[0].click();", upload);
-        
-    	// Wait for dialog to open
-    	Thread.sleep(2000);
+        wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath("//div[contains(text(),'Forms')]")
+                )
+        ).click();
 
-    	// Copy file path to clipboard
-    	StringSelection ss = new StringSelection("C:\\Users\\mohin\\Downloads\\Rishabh Soni CV.pdf");
-    	Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
-    	
-    	// Use Robot
-    	Robot rb = new Robot();
+        wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath("//span[contains(text(),'Practice Form')]")
+                )
+        ).click();
 
-    	// Paste (CTRL + V)
-    	rb.keyPress(KeyEvent.VK_CONTROL);
-    	rb.keyPress(KeyEvent.VK_V);
-    	Thread.sleep(2000);
-    	
-    	rb.keyRelease(KeyEvent.VK_V);
-    	rb.keyRelease(KeyEvent.VK_CONTROL);
-    	Thread.sleep(2000);
-    	
-    	// Press ENTER
-    	rb.keyPress(KeyEvent.VK_ENTER);	
-    	
-        
-        
-        
+        WebElement upload = wait.until(
+                ExpectedConditions.presenceOfElementLocated(
+                        By.id("uploadPicture")
+                )
+        );
+
+        String filePath = System.getProperty("user.dir")
+                + "/src/test/resources/testdata/Rishabh Soni CV.pdf";
+
+        System.out.println("Uploading file: " + filePath);
+
+        upload.sendKeys(filePath);
+
+        System.out.println("File uploaded successfully.");
     }
 }
